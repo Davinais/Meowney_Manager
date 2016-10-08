@@ -23,9 +23,9 @@ async def on_message(message):
     if message.content == prefix + "rewards":
         await rewards(message)
 
-async def rewards(message):
+async def check_dailies(message):
     initial = False if os.path.exists("dailies.csv") else True
-    reward = True
+    check = True
     if initial:
         with open("dailies.csv", "w", newline="") as dailies:
             w = csv.writer(dailies, quoting=csv.QUOTE_ALL)
@@ -47,7 +47,7 @@ async def rewards(message):
                             diffhours += 1
                             diffminutes -= 60
                         nomsg = await client.send_message(message.channel, "咦咦!?不可以這麼著急哦...{0}！不是約定好再過{1}小時{2}分之後才能再來找喵妮的喵？:blush:".format(message.author.mention, diffhours, diffminutes))
-                        reward = False
+                        check = False
                         w.writerow(row)
                     else:
                         latestrow = [message.author.id, message.timestamp.strftime("%Y-%m-%d %H:%M:%S")]
@@ -58,6 +58,10 @@ async def rewards(message):
                 w.writerow([message.author.id, message.timestamp.strftime("%Y-%m-%d %H:%M:%S")])
         os.remove("dailies.csv")
         os.rename(".dailies_tmp.csv", "dailies.csv")
+    return check
+
+async def rewards(message):
+    reward = await check_dailies(message)
     if reward:
         print("獎勵發送中...")
         rewardmeowney = random.randint(1,5)
