@@ -29,7 +29,7 @@ async def rewards(message):
     if initial:
         with open("dailies.csv", "w", newline="") as dailies:
             w = csv.writer(dailies, quoting=csv.QUOTE_ALL)
-            w.writeheader(["User ID", "Last Rewarded"])
+            w.writerow(["User ID", "Last Rewarded"])
             w.writerow([message.author.id, message.timestamp.strftime("%Y-%m-%d %H:%M:%S")])
     else:
         with open("dailies.csv", "r", newline="") as dailies, open(".dailies_tmp.csv", "w", newline="") as edit:
