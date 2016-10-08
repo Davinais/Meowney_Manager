@@ -46,7 +46,7 @@ async def rewards(message):
                         while diffminutes >= 60:
                             diffhours += 1
                             diffminutes -= 60
-                        nomsg = await client.send_message(message.channel, "{0}，要再過了{1}小時{2}分之後才能再領一次獎勵喔！".format(message.author.mention, diffhours, diffminutes))
+                        nomsg = await client.send_message(message.channel, "咦咦!?不可以這麼著急哦...{0}！不是約定好再過{1}小時{2}分之後才能再來找喵妮的喵？:blush:".format(message.author.mention, diffhours, diffminutes))
                         reward = False
                         w.writerow(row)
                     else:
@@ -61,7 +61,7 @@ async def rewards(message):
     if reward:
         print("獎勵發送中...")
         rewardmeowney = random.randint(1,5)
-        awardmsg = await client.send_message(message.channel, "{0} 來自母體的祝福，獲得了{1}喵幣！".format(message.author.mention, rewardmeowney))
+        awardmsg = await client.send_message(message.channel, "{0}果然是溫柔又守約定的人呢...喵妮除了給你{1}喵幣做鼓勵以外...也祝你今天幸福唷！下次也約定好再來看喵妮，好喵？:blush:".format(message.author.mention, rewardmeowney))
         awardcmd = await client.send_message(message.channel, "$award {1} {0}".format(message.author.mention, rewardmeowney))
         await asyncio.sleep(0.2)
         await client.delete_message(awardcmd)
