@@ -23,6 +23,11 @@ async def on_message(message):
     if message.content == prefix + "rewards":
         await rewards(message)
 
+async def award_by_cmd(channel, receiver, meowney):
+    awardcmd = await client.send_message(channel, "$award {1} {0}".format(receiver.mention, meowney))
+    await asyncio.sleep(0.2)
+    await client.delete_message(awardcmd)
+
 async def check_dailies(message):
     initial = False if os.path.exists("dailies.csv") else True
     check = True
@@ -66,10 +71,8 @@ async def rewards(message):
         print("獎勵發送中...")
         rewardmeowney = random.randint(1,5)
         awardmsg = await client.send_message(message.channel, "{0}果然是溫柔又守約定的人呢...喵妮除了給你{1}喵幣做鼓勵以外...也祝你今天幸福唷！下次也約定好再來看喵妮，好喵？:blush:".format(message.author.mention, rewardmeowney))
-        awardcmd = await client.send_message(message.channel, "$award {1} {0}".format(message.author.mention, rewardmeowney))
-        await asyncio.sleep(0.2)
-        await client.delete_message(awardcmd)
+        await award_by_cmd(message.channel, message.author, rewardmeowney)
         print("已經發送{1}喵幣獎勵給 {0}".format(message.author.name, rewardmeowney))
-        print("----------")    
+        print("----------")
 
 client.run("")
