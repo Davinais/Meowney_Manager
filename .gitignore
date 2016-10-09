@@ -2,6 +2,9 @@
 *.cfg
 *.log
 *.csv
+*.sql
+*.db
+*.pyc
 token.txt
 meowneytest.py
 meowneyexe.py

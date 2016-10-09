@@ -6,6 +6,7 @@ import os
 import csv
 import random
 import asyncio
+import meowrpg.rpg
 
 client = discord.Client()
 
@@ -22,6 +23,9 @@ async def on_message(message):
     prefix = "$"
     if message.content == prefix + "rewards":
         await rewards(message)
+    if message.content.startswith(prefix + "rpg"):
+        if await check_dailies(message):
+            await meowrpg.rpg.rpg(client, message)
 
 async def award_by_cmd(channel, receiver, meowney):
     awardcmd = await client.send_message(channel, "$award {1} {0}".format(receiver.mention, meowney))
