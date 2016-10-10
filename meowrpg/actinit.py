@@ -5,7 +5,7 @@ import random
 async def actinit(player, client, channel):
     await client.send_message(channel, "```1000年前，廢文洗板橫行世間，這時候喵洽勇者勇敢地挑戰廢文大魔神，在經過一翻激烈的戰鬥後終於將其封印！\n"
     "孰料千年的封印卻因為無聊肥宅狂發廢文的舉動而引起共鳴，封印之石產生了裂痕，廢文大魔神即將甦醒！\n"
-    "喵洽Meow_Chat此時正遭受廢文軍團的襲擊，喵洽的勇士呀！請幫助喵妮恢復喵洽的秩序好喵？\n```"
+    "喵洽Meow_Chat此時正遭受廢文軍團的襲擊，喵洽的勇士呀！請幫助喵妮恢復喵洽的秩序好喵？```\n"
     ":arrow_right:{0}是否願意幫助喵妮討伐廢文大魔神？\n\n"
     ":one:為了喵妮的笑容，請交給我吧！\n"
     ":two:什麼！廢文大魔神復活！？呵呵...這不正是我輩宅宅的宿願嗎！！".format(player.mention))
@@ -19,25 +19,27 @@ async def actinit(player, client, channel):
     if not gs is None:
         gschoice = int(gs.content)
     if gschoice == 1:
-        await client.send_message(channel, "```太感謝了！喵洽的勇士呀！請在出發前選擇你嚮往的職業吧！\n```"
+        await client.send_message(channel, "```太感謝了！喵洽的勇士呀！請在出發前選擇你嚮往的職業吧！```\n"
         ":arrow_right:選擇職業\n\n"
-        ":one:戰士      (物攻+4 物防+4 術傷-3 術防-1)\n"
-        ":two:法師      (物攻-2 物防-2 術傷+6 術防+2)\n"
-        ":three:弓箭手    (物攻+8 物防-1 術傷-2 術防-1)\n"
-        ":four:妖精      (術攻+2               術防+2)\n"
-        ":five:小惡魔    (物攻+1        術傷+1       )\n"
-        ":six:吟遊詩人  (       物防+1        術防+3)\n"
-        ":seven:僧侶      (物攻-1        術傷+2 術防+3)")
+        ":one:學長的形狀　　(物攻+5　物防+4　術傷-1　術防-2)\n"
+        ":two:三十歲沒女友　(物攻-2　物防-1　術傷+6　術防+2)\n"
+        ":three:巨乳狂熱教徒　(物攻+9　物防-1　術傷+0　術防-2)\n"
+        ":four:肥宅　　　　　(物攻+2　物防+1　術傷+2　術防+2)\n"
+        ":five:自宅警備員　　(物攻-1　物防+6　術傷+0　術防+1)\n"
+        ":six:％貓愛貓人士　(物攻+0　物防+3　術傷+0　術防+3)\n"
+        ":seven:蘿莉守護者　　(物攻+0　物防+0　術傷+1　術防+5)\n"
+        ":eight:爆裂魔導士　　(物攻-2　物防-2　術傷+12　術防-2)\n"
+        ":nine:我的王之力RR　(物攻+4　物防+0　術傷+4　術防+0)\n")
 
         def classescheck(m):
-            opt = ("1", "2", "3", "4", "5", "6", "7")
+            opt = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
             return True if m.content in opt else False
 
         classeschoice = await client.wait_for_message(timeout = 60.0, author = player, check = classescheck)
         dbconn = sqlite3.connect("rpg.db")
         dbcursor = dbconn.cursor()
         if classeschoice is None:
-            classes = random.randint(1, 7)
+            classes = random.randint(1, 9)
             dbcursor.execute("SELECT Name FROM Classes WHERE ID = ?",(classes,))
             classname = dbcursor.fetchone()
             await client.send_message(channel, "{0}，都挑了這麼久還想不到，那喵妮我就幫你挑一個職業好了\n"
@@ -46,10 +48,10 @@ async def actinit(player, client, channel):
         else:
             dbcursor.execute("UPDATE Players SET Classes = ? WHERE ID = ?",(int(classeschoice.content), player.id))
         dbconn.commit()
-        await client.send_message(channel, "```馬上就要出發了呢！喵妮要提醒{0}，每位喵洽勇士只有3生命值跟3精神值哦。遊戲中可利用指令$check 查看目前角色狀態。\n"
+        await client.send_message(channel, "```馬上就要出發了呢！喵妮要提醒{0}，每位喵洽勇士只有3生命值跟3精神值哦。遊戲中可利用指令$rpg check 查看目前角色狀態。\n"
         "戰鬥結果如果是<完全勝利>的話會有額外獎勵；\n"
         "若只有<勉強勝利>的話，生命值或精神值會受到損傷；\n"
-        "若是<殘念敗北>的話就必須等到明天恢復元氣才能再度挑戰了...\n```"
+        "若是<殘念敗北>的話就必須等到明天恢復元氣才能再度挑戰了...```\n"
         "那麼{1}還有想詢問的事情嗎？\n\n"
         ":one:喵妮！你等我，等討伐完魔王之後我們就...\n"
         ":two:嘿嘿！喵妮，出發前先讓我爽一下吧！！(變身成癡漢攻擊喵妮)\n"

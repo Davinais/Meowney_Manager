@@ -23,13 +23,15 @@ async def dbinit():
         EXTDEF INTEGER,
         EXTMATK INTEGER,
         EXTMDEF INTEGER);
-    INSERT INTO Classes VALUES (1, '戰士', 4, 4, -3, -1);
-    INSERT INTO Classes VALUES (2, '法師', -2, -2, 6, 2);
-    INSERT INTO Classes VALUES (3, '弓箭手', 8, -1, -2, -1);
-    INSERT INTO Classes VALUES (4, '妖精', 2, 0, 0, 2);
-    INSERT INTO Classes VALUES (5, '小惡魔', 1, 0, 1, 0);
-    INSERT INTO Classes VALUES (6, '吟遊詩人', 0, 1, 0, 3);
-    INSERT INTO Classes VALUES (7, '僧侶', -1, 0, 2, 3);
+    INSERT INTO Classes VALUES (1, '學長的形狀', 5, 4, -1, -2);
+    INSERT INTO Classes VALUES (2, '三十歲沒女友', -2, -1, 6, 2);
+    INSERT INTO Classes VALUES (3, '巨乳狂熱教徒', 9, -1, 0, -2);
+    INSERT INTO Classes VALUES (4, '肥宅', 2, 1, 2, 2);
+    INSERT INTO Classes VALUES (5, '自宅警備員', -1, 6, 0, 1);
+    INSERT INTO Classes VALUES (6, '％貓愛貓人士', 0, 3, 0, 3);
+    INSERT INTO Classes VALUES (7, '蘿莉守護者', 0, 0, 1, 5);
+    INSERT INTO Classes VALUES (8, '爆裂魔導士', -2, -2, 12, -2);
+    INSERT INTO Classes VALUES (9, '我的王之力RR', 4, 0, 4, 0);
     """)
     dbcursor.executescript("""CREATE TABLE Weapons(
         ID INTEGER PRIMARY KEY,
