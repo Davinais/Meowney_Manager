@@ -101,13 +101,13 @@ async def actinit(player, client, channel):
             if starteventresult == 1:
                 await client.send_message(channel, "咦咦！原來{0}也是安麗的會員嗎？噗...喵妮這裏剛好有最新的產品DM唷！   %(受到了喵妮強制推銷，喵幣-3，隨機屬性-{1}+2)".format(player.mention, statsname[randstats]))
                 stats_change(player.id, statsname[randstats], 2)
-                takecmd = await client.send_message(channel, "$take {1} 3".format(player.mention))
+                takecmd = await client.send_message(channel, "$take {0} 3".format(player.mention))
                 await asyncio.sleep(0.2)
                 await client.delete_message(takecmd)
             elif starteventresult == 2:
                 await client.send_message(channel, "呢...安麗是什麼+.+   %({0}強制推銷安麗產品給喵妮，喵幣+3，隨機屬性-{1}-1)".format(player.name, statsname[randstats]))
                 stats_change(player.id, statsname[randstats], -1)
-                awardcmd = await client.send_message(channel, "$award {1} 3".format(player.mention))
+                awardcmd = await client.send_message(channel, "$award {0} 3".format(player.mention))
                 await asyncio.sleep(0.2)
                 await client.delete_message(awardcmd)
             else:
