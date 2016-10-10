@@ -52,7 +52,7 @@ async def checkstats(player, client, channel):
     "```職業： {1}\n"
     "生命值： {2}　　　　精神值： {3}\n"
     "物攻： {4}({5})　　　　物防： {6}({7})\n"
-    "術傷： {8}({9})　　　　術防： {10}({11})\n\n"
+    "術傷： {8}({9})　　　　術抗： {10}({11})\n\n"
     "增益武器： {12}\n"
     "身體裝備： {13}\n"
     "飾品　　： {14}```".format(player.mention, classname, str(playerstats[1]), str(playerstats[2]),
