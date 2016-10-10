@@ -1,6 +1,8 @@
 import discord
 import sqlite3
 import random
+from .playerupdate import *
+from .item import get_qua_itemlist
 
 async def actinit(player, client, channel):
     await client.send_message(channel, "```1000年前，廢文洗板橫行世間，這時候喵洽勇者勇敢地挑戰廢文大魔神，在經過一翻激烈的戰鬥後終於將其封印！\n"
@@ -36,18 +38,19 @@ async def actinit(player, client, channel):
             return True if m.content in opt else False
 
         classeschoice = await client.wait_for_message(timeout = 60.0, author = player, check = classescheck)
-        dbconn = sqlite3.connect("rpg.db")
-        dbcursor = dbconn.cursor()
         if classeschoice is None:
             classes = random.randint(1, 9)
+            dbconn = sqlite3.connect("rpg.db")
+            dbcursor = dbconn.cursor()
             dbcursor.execute("SELECT Name FROM Classes WHERE ID = ?",(classes,))
             classname = dbcursor.fetchone()
+            dbcursor.close()
+            dbconn.close()
             await client.send_message(channel, "{0}，都挑了這麼久還想不到，那喵妮我就幫你挑一個職業好了\n"
             "從現在起，你就是**{1}**了！".format(player.mention, classname[0]))
-            dbcursor.execute("UPDATE Players SET Classes = ? WHERE ID = ?",(classes, player.id))
+            class_set(player.id, classes)
         else:
-            dbcursor.execute("UPDATE Players SET Classes = ? WHERE ID = ?",(int(classeschoice.content), player.id))
-        dbconn.commit()
+            class_set(player.id, int(classeschoice.content))
         await client.send_message(channel, "```馬上就要出發了呢！喵妮要提醒{0}，每位喵洽勇士只有3生命值跟3精神值哦。遊戲中可利用指令$rpg check 查看目前角色狀態。\n"
         "戰鬥結果如果是<完全勝利>的話會有額外獎勵；\n"
         "若只有<勉強勝利>的話，生命值或精神值會受到損傷；\n"
@@ -74,57 +77,54 @@ async def actinit(player, client, channel):
         if starteventchoice == 1:
             if starteventresult == 1:
                 await client.send_message(channel, "嗯！我們就是最好的朋友了！   %({0}被喵妮發了卡，隨機屬性-{1}+1)".format(player.name, statsname[randstats]))
-                dbcursor.execute("UPDATE Players SET "+statsname[randstats]+" = "+statsname[randstats]+"+1 WHERE ID = ?",(player.id,))
+                stats_change(player.id, statsname[randstats], 1)
             elif starteventresult == 2:
                 await client.send_message(channel, "是的哦！我們喵洽Meow_Chat到時就能恢復和平了呢！   %({0}受到了喵妮鼓勵，隨機屬性-{1}+2)".format(player.name, statsname[randstats]))
-                dbcursor.execute("UPDATE Players SET "+statsname[randstats]+" = "+statsname[randstats]+"+2 WHERE ID = ?",(player.id,))
+                stats_change(player.id, statsname[randstats], 2)
             else:
                 await client.send_message(channel, "「我們...就...？」...   %({0}與喵妮產生了曖昧情愫，隨機屬性-{1}-1)".format(player.name, statsname[randstats]))
-                dbcursor.execute("UPDATE Players SET "+statsname[randstats]+" = "+statsname[randstats]+"-1 WHERE ID = ?",(player.id,))
+                stats_change(player.id, statsname[randstats], -1)
         elif starteventchoice == 2:
             if starteventresult == 1:
                 await client.send_message(channel, "咦...！...不要！   %(喵妮隨手拿起了身邊的折凳對{0}進行致命性的抵抗，生命值-1)".format(player.name))
-                dbcursor.execute("UPDATE Players SET HP = HP-1 WHERE ID = ?",(player.id,))
+                stats_change(player.id, "HP", -1)
             elif starteventresult == 2:
                 await client.send_message(channel, "呢...處男都是這樣的嗎...很困擾呀...   %({0}受到了喵妮的諷刺而崩潰，精神值-1)".format(player.name))
-                dbcursor.execute("UPDATE Players SET SAN = SAN-1 WHERE ID = ?",(player.id,))
+                stats_change(player.id, "SAN", -1)
             else:
-                dbcursor.execute("SELECT ID, Name FROM "+itemcat[randitem]+" WHERE QUA = 2")
-                itemlist = dbcursor.fetchall()
+                itemlist = get_qua_itemlist(itemcat[randitem], 2)
                 random.shuffle(itemlist)
                 await client.send_message(channel, "呵呵...{0}真是個風趣的人呢！(推開)，當年的喵洽勇者似乎也是這麼風趣，看來{0}很適合穿戴他留下來的裝備唷！   %(獲得隨機二階裝-{1}，隨機屬性-{2}+1)".format(player.mention, itemlist[0][1], statsname[randstats]))
-                dbcursor.execute("UPDATE Players SET "+itemcat[randitem]+" = ? WHERE ID = ?",(itemlist[0][0], player.id))
-                dbcursor.execute("UPDATE Players SET "+statsname[randstats]+" = "+statsname[randstats]+"+1 WHERE ID = ?",(player.id,))
+                items_equip(player.id, itemcat[randitem], itemlist[0][0])
+                stats_change(player.id, statsname[randstats], 1)
         elif starteventchoice == 3:
             if starteventresult == 1:
                 await client.send_message(channel, "咦咦！原來{0}也是安麗的會員嗎？噗...喵妮這裏剛好有最新的產品DM唷！   %(受到了喵妮強制推銷，喵幣-3，隨機屬性-{1}+2)".format(player.mention, statsname[randstats]))
-                dbcursor.execute("UPDATE Players SET "+statsname[randstats]+" = "+statsname[randstats]+"+2 WHERE ID = ?",(player.id,))
+                stats_change(player.id, statsname[randstats], 2)
                 takecmd = await client.send_message(channel, "$take {1} 3".format(player.mention))
                 await asyncio.sleep(0.2)
                 await client.delete_message(takecmd)
             elif starteventresult == 2:
                 await client.send_message(channel, "呢...安麗是什麼+.+   %({0}強制推銷安麗產品給喵妮，喵幣+3，隨機屬性-{1}-1)".format(player.name, statsname[randstats]))
-                dbcursor.execute("UPDATE Players SET "+statsname[randstats]+" = "+statsname[randstats]+"-1 WHERE ID = ?",(player.id,))
+                stats_change(player.id, statsname[randstats], -1)
                 awardcmd = await client.send_message(channel, "$award {1} 3".format(player.mention))
                 await asyncio.sleep(0.2)
                 await client.delete_message(awardcmd)
             else:
                 await client.send_message(channel, "現在不是討論這個的時候了啦！！   %({0}被催促著上路，隨機屬性-{1}+1)".format(player.name, statsname[randstats]))
-                dbcursor.execute("UPDATE Players SET "+statsname[randstats]+" = "+statsname[randstats]+"+1 WHERE ID = ?",(player.id,))
+                stats_change(player.id, statsname[randstats], 1)
         else:
             if starteventresult == 1:
                 await client.send_message(channel, "真是個男子漢呢...{0}   %(受到了喵妮的敬仰，隨機屬性-{1}+2)".format(player.mention, statsname[randstats]))
-                dbcursor.execute("UPDATE Players SET "+statsname[randstats]+" = "+statsname[randstats]+"+2 WHERE ID = ?",(player.id,))
+                stats_change(player.id, statsname[randstats], 2)
             elif starteventresult == 2:
-                dbcursor.execute("SELECT ID, Name FROM "+itemcat[randitem]+" WHERE QUA = 1")
-                itemlist = dbcursor.fetchall()
+                itemlist = get_qua_itemlist(itemcat[randitem], 1)
                 random.shuffle(itemlist)
                 await client.send_message(channel, "咦咦！...稍等呀！{0}，呼...差點忘了給您這個！   %(獲得隨機一階裝-{1})".format(player.mention, itemlist[0][1]))
-                dbcursor.execute("UPDATE Players SET "+itemcat[randitem]+" = ? WHERE ID = ?",(itemlist[0][0], player.id))
+                items_equip(player.id, itemcat[randitem], itemlist[0][0])
             else:
                 await client.send_message(channel, "{0}...難道是個無情的人...？   %(因為讓喵妮落寞著臉，精神值-1)".format(player.mention))
-                dbcursor.execute("UPDATE Players SET SAN = SAN-1 WHERE ID = ?",(player.id,))
-        dbcursor.execute("UPDATE Players SET Process = 10 WHERE ID = ?",(player.id,))
-        dbconn.commit()
+                stats_change(player.id, "SAN", -1)
+        process_set(player.id, 10)
     if gschoice == 2:
         await client.send_message(channel, "{0}...難道是個無情的人...？就這麼不想要幫助喵妮嗎...    %(遊戲結束)".format(player.mention))
