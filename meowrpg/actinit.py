@@ -21,17 +21,24 @@ async def actinit(player, client, channel):
     if not gs is None:
         gschoice = int(gs.content)
     if gschoice == 1:
+        dbconn = sqlite3.connect("rpg.db")
+        dbcursor = dbconn.cursor()
+        dbcursor.execute("SELECT Name FROM Classes")
+        classname = dbcursor.fetchall()
+        dbcursor.close()
+        dbconn.close()
         await client.send_message(channel, "```太感謝了！喵洽的勇士呀！請在出發前選擇你嚮往的職業吧！```\n"
-        ":arrow_right:選擇職業\n\n"
-        ":one:學長的形狀　　(物攻+5　物防+4　術傷-1　術抗-2)\n"
-        ":two:三十歲沒女友　(物攻-2　物防-1　術傷+6　術抗+2)\n"
-        ":three:巨乳狂熱教徒　(物攻+9　物防-1　術傷+0　術抗-2)\n"
-        ":four:肥宅　　　　　(物攻+2　物防+1　術傷+2　術抗+2)\n"
-        ":five:自宅警備員　　(物攻-1　物防+6　術傷+0　術抗+1)\n"
-        ":six:％貓愛貓人士　(物攻+0　物防+3　術傷+0　術抗+3)\n"
-        ":seven:蘿莉守護者　　(物攻+0　物防+0　術傷+1　術抗+5)\n"
-        ":eight:爆裂魔導士　　(物攻-2　物防-2　術傷+12　術抗-2)\n"
-        ":nine:我的王之力RR　(物攻+4　物防+0　術傷+4　術抗+0)\n")
+        ":arrow_right:{0}請選擇職業\n\n"
+        ":one:{1}\n"
+        ":two:{2}\n"
+        ":three:{3}\n"
+        ":four:{4}\n"
+        ":five:{5}\n"
+        ":six:{6}\n"
+        ":seven:{7}\n"
+        ":eight:{8}\n"
+        ":nine:{9}\n".format(player.mention, classname[0][0], classname[1][0], classname[2][0], classname[3][0],
+        classname[4][0], classname[5][0], classname[6][0], classname[7][0], classname[8][0]))
 
         def classescheck(m):
             opt = ("1", "2", "3", "4", "5", "6", "7", "8", "9")
@@ -40,14 +47,8 @@ async def actinit(player, client, channel):
         classeschoice = await client.wait_for_message(timeout = 60.0, author = player, check = classescheck)
         if classeschoice is None:
             classes = random.randint(1, 9)
-            dbconn = sqlite3.connect("rpg.db")
-            dbcursor = dbconn.cursor()
-            dbcursor.execute("SELECT Name FROM Classes WHERE ID = ?",(classes,))
-            classname = dbcursor.fetchone()
-            dbcursor.close()
-            dbconn.close()
             await client.send_message(channel, "{0}，都挑了這麼久還想不到，那喵妮我就幫你挑一個職業好了\n"
-            "從現在起，你就是**{1}**了！".format(player.mention, classname[0]))
+            "從現在起，你就是**{1}**了！".format(player.mention, classname[classes-1][0]))
             class_set(player.id, classes)
         else:
             class_set(player.id, int(classeschoice.content))
