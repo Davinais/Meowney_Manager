@@ -1,7 +1,7 @@
 import discord
 import random
-from .playerupdate import *
-from .item import get_qua_itemlist
+from .players import *
+from .items import get_qua_itemlist
 from .classes import get_classlist
 
 async def actinit(player, client, channel):

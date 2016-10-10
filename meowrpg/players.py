@@ -1,9 +1,9 @@
 import sqlite3
 
-playerdb = "rpg.db"
+playersdb = "rpg.db"
 
 def stats_change(player_id, stats, amount):
-    dbconn = sqlite3.connect(playerdb)
+    dbconn = sqlite3.connect(playersdb)
     dbcursor = dbconn.cursor()
     change = ""
     if amount >= 0:
@@ -16,7 +16,7 @@ def stats_change(player_id, stats, amount):
     dbconn.close()
 
 def prop_set(player_id, prop_name, prop_content):
-    dbconn = sqlite3.connect(playerdb)
+    dbconn = sqlite3.connect(playersdb)
     dbcursor = dbconn.cursor()
     dbcursor.execute("UPDATE Players SET "+prop_name+" = ? WHERE ID = ?",(prop_content, player_id))
     dbcursor.close()

@@ -1,9 +1,9 @@
 import sqlite3
 
-itemdb = "rpg.db"
+itemsdb = "rpg.db"
 
 def get_qua_itemlist(item_category, qua):
-    dbconn = sqlite3.connect(itemdb)
+    dbconn = sqlite3.connect(itemsdb)
     dbcursor = dbconn.cursor()
     dbcursor.execute("SELECT ID, Name FROM "+item_category+" WHERE QUA = ?",(qua,))
     itemlist = dbcursor.fetchall()
