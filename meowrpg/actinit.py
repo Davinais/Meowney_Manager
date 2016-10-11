@@ -74,46 +74,46 @@ async def actinit(player, client, channel):
         randitem = random.randint(0, 2)
         if starteventchoice == 1:
             if starteventresult == 1:
-                await client.send_message(channel, "```嗯！我們就是最好的朋友了！```\n{0}`被喵妮發了卡，<{1}>+1`".format(player.mention, statsnameCht[randstats]))
+                await client.send_message(channel, "```嗯！我們就是最好的朋友了！```\n{0}`被喵妮發了卡，<{1}+1>`".format(player.mention, statsnameCht[randstats]))
                 stats_change(player.id, statsname[randstats], 1)
             elif starteventresult == 2:
-                await client.send_message(channel, "```是的哦！我們喵洽Meow_Chat到時就能恢復和平了呢！```\n{0}`受到了喵妮鼓勵，<{1}>+2`".format(player.mention, statsnameCht[randstats]))
+                await client.send_message(channel, "```是的哦！我們喵洽Meow_Chat到時就能恢復和平了呢！```\n{0}`受到了喵妮鼓勵，<{1}+2>`".format(player.mention, statsnameCht[randstats]))
                 stats_change(player.id, statsname[randstats], 2)
             else:
-                await client.send_message(channel, "```「我們...就...？」...```\n{0}`與喵妮產生了曖昧情愫，<{1}>-1`".format(player.mention, statsnameCht[randstats]))
+                await client.send_message(channel, "```「我們...就...？」...```\n{0}`與喵妮產生了曖昧情愫，<{1}-1>`".format(player.mention, statsnameCht[randstats]))
                 stats_change(player.id, statsname[randstats], -1)
         elif starteventchoice == 2:
             if starteventresult == 1:
-                await client.send_message(channel, "```咦...！...不要！```\n`喵妮隨手拿起了身邊的折凳對`{0}`進行致命性的抵抗，<生命值>-1`".format(player.mention))
+                await client.send_message(channel, "```咦...！...不要！```\n`喵妮隨手拿起了身邊的折凳對`{0}`進行致命性的抵抗，<生命值-1>`".format(player.mention))
                 stats_change(player.id, "HP", -1)
             elif starteventresult == 2:
-                await client.send_message(channel, "```呢...處男都是這樣的嗎...很困擾呀...```\n{0}`受到了喵妮的諷刺而崩潰，<精神值>-1`".format(player.mention))
+                await client.send_message(channel, "```呢...處男都是這樣的嗎...很困擾呀...```\n{0}`受到了喵妮的諷刺而崩潰，<精神值-1>`".format(player.mention))
                 stats_change(player.id, "SAN", -1)
             else:
                 itemlist = get_qua_itemlist(itemcat[randitem], 2)
                 random.shuffle(itemlist)
-                await client.send_message(channel, "```呵呵...{0}真是個風趣的人呢！(推開)，當年的喵洽勇者似乎也是這麼風趣，看來{0}很適合穿戴他留下來的裝備唷！```\n{1}`獲得「{2}」，<{3}>+1`".format(player.name, player.mention, itemlist[0][1], statsnameCht[randstats]))
+                await client.send_message(channel, "```呵呵...{0}真是個風趣的人呢！(推開)，當年的喵洽勇者似乎也是這麼風趣，看來{0}很適合穿戴他留下來的裝備唷！```\n{1}`獲得「{2}」，<{3}+1>`".format(player.name, player.mention, itemlist[0][1], statsnameCht[randstats]))
                 items_equip(player.id, itemcat[randitem], itemlist[0][0])
                 stats_change(player.id, statsname[randstats], 1)
         elif starteventchoice == 3:
             if starteventresult == 1:
-                await client.send_message(channel, "```咦咦！原來{0}也是安麗的會員嗎？噗...喵妮這裏剛好有最新的產品DM唷！```\n{1}`受到了喵妮強制推銷，喵幣-3，<{2}>+2`".format(player.name, player.mention, statsnameCht[randstats]))
+                await client.send_message(channel, "```咦咦！原來{0}也是安麗的會員嗎？噗...喵妮這裏剛好有最新的產品DM唷！```\n{1}`受到了喵妮強制推銷，[喵幣-3]，<{2}+2>`".format(player.name, player.mention, statsnameCht[randstats]))
                 stats_change(player.id, statsname[randstats], 2)
                 takecmd = await client.send_message(channel, "$take {0} 3".format(player.mention))
                 await asyncio.sleep(0.2)
                 await client.delete_message(takecmd)
             elif starteventresult == 2:
-                await client.send_message(channel, "```呢...安麗是什麼+.+```\n{0}`強制推銷安麗產品給喵妮，喵幣+3，<{1}>-1`".format(player.mention, statsnameCht[randstats]))
+                await client.send_message(channel, "```呢...安麗是什麼+.+```\n{0}`強制推銷安麗產品給喵妮，[喵幣+3]，<{1}-1>`".format(player.mention, statsnameCht[randstats]))
                 stats_change(player.id, statsname[randstats], -1)
                 awardcmd = await client.send_message(channel, "$award {0} 3".format(player.mention))
                 await asyncio.sleep(0.2)
                 await client.delete_message(awardcmd)
             else:
-                await client.send_message(channel, "```現在不是討論這個的時候了啦！！```\n{0}`被催促著上路，<{1}>+1`".format(player.mention, statsnameCht[randstats]))
+                await client.send_message(channel, "```現在不是討論這個的時候了啦！！```\n{0}`被催促著上路，<{1}+1>`".format(player.mention, statsnameCht[randstats]))
                 stats_change(player.id, statsname[randstats], 1)
         else:
             if starteventresult == 1:
-                await client.send_message(channel, "```真是個男子漢呢...{0}```\n{1}`受到了喵妮的敬仰，<{2}>+2`".format(player.name, player.mention, statsnameCht[randstats]))
+                await client.send_message(channel, "```真是個男子漢呢...{0}```\n{1}`受到了喵妮的敬仰，<{2}+2>`".format(player.name, player.mention, statsnameCht[randstats]))
                 stats_change(player.id, statsname[randstats], 2)
             elif starteventresult == 2:
                 itemlist = get_qua_itemlist(itemcat[randitem], 1)
@@ -121,7 +121,7 @@ async def actinit(player, client, channel):
                 await client.send_message(channel, "```咦咦！...稍等呀！{0}，呼...差點忘了給您這個！```\n{1}`獲得「{2}」`".format(player.name, player.mention, itemlist[0][1]))
                 items_equip(player.id, itemcat[randitem], itemlist[0][0])
             else:
-                await client.send_message(channel, "```{0}...難道是個無情的人...？```\n{1}`因為讓喵妮落寞著臉，<精神值>-1`".format(player.name, player.mention))
+                await client.send_message(channel, "```{0}...難道是個無情的人...？```\n{1}`因為讓喵妮落寞著臉，<精神值-1>`".format(player.name, player.mention))
                 stats_change(player.id, "SAN", -1)
         process_set(player.id, 10)
     if gschoice == 2:
