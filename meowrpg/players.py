@@ -2,6 +2,16 @@ import sqlite3
 
 playersdb = "rpg.db"
 
+def get_all_playerstats(player_id):
+    dbconn = sqlite3.connect(playersdb)
+    dbcursor = dbconn.cursor()
+    dbcursor.execute("SELECT * FROM Players WHERE ID = ?",(player_id,))
+    playerstats = dbcursor.fetchone()
+    dbcursor.close()
+    dbconn.commit()
+    dbconn.close()
+    return playerstats
+
 def stats_change(player_id, stats, amount):
     dbconn = sqlite3.connect(playersdb)
     dbcursor = dbconn.cursor()

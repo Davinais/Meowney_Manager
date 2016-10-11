@@ -1,17 +1,16 @@
 import discord
-import sqlite3
 import os
 from .calcext import calcext
+from .players import get_all_playerstats
+from .classes import get_classdata
+from .items import get_itemdata
 
 async def checkstats(player, client, channel):
     dbinitial = False if os.path.exists("rpg.db") else True
     if dbinitial:
         await client.send_message(channel, "喵洽大冒險尚未開始喔，請輸入`$rpg`來成為第一位玩家吧！")
         return
-    dbconn = sqlite3.connect("rpg.db")
-    dbcursor = dbconn.cursor()
-    dbcursor.execute('SELECT * FROM Players WHERE ID = ?',(player.id,))
-    playerstats = dbcursor.fetchone()
+    playerstats = get_all_playerstats(player.id)
     if playerstats is None:
         await client.send_message(channel, "{0}還不是喵洽大冒險的玩家喔，快輸入`$rpg`來開始這段旅程吧！".format(player.mention))
         return
@@ -21,29 +20,25 @@ async def checkstats(player, client, channel):
         return
     playerext = {"ATK":0, "DEF":0, "MATK":0, "MDEF":0}
     #檢查職業
-    dbcursor.execute('SELECT Name, EXTATK, EXTDEF, EXTMATK, EXTMDEF FROM Classes WHERE ID = ?',(playerstats[7],))
-    playerclass = dbcursor.fetchone()
+    playerclass = get_classdata(playerstats[7])
     classname = playerclass[0]
     playerext = await calcext(playerext, playerclass[1], playerclass[2], playerclass[3], playerclass[4])
     #檢查武器
     weapon_name = "<無>"
     if not playerstats[8] is None:
-        dbcursor.execute('SELECT Name, EXTATK, EXTDEF, EXTMATK, EXTMDEF FROM Weapons WHERE ID = ?',(playerstats[8],))
-        weapon = dbcursor.fetchone()
+        weapon = get_itemdata("Weapons", playerstats[8])
         weapon_name = weapon[0]
         playerext = await calcext(playerext, weapon[1], weapon[2], weapon[3], weapon[4])
     #檢查身體裝備
     armor_name = "<無>"
     if not playerstats[9] is None:
-        dbcursor.execute('SELECT Name, EXTATK, EXTDEF, EXTMATK, EXTMDEF FROM Armors WHERE ID = ?',(playerstats[9],))
-        armor = dbcursor.fetchone()
+        armor = get_itemdata("Armors", playerstats[9])
         armor_name = armor[0]
         playerext = await calcext(playerext, armor[1], armor[2], armor[3], armor[4])
     #檢查護符
     charm_name = "<無>"
     if not playerstats[10] is None:
-        dbcursor.execute('SELECT Name, EXTATK, EXTDEF, EXTMATK, EXTMDEF FROM Charms WHERE ID = ?',(playerstats[10],))
-        charm = dbcursor.fetchone()
+        charm = get_itemdata("Charms", playerstats[10])
         charm_name = charm[0]
         playerext = await calcext(playerext, charm[1], charm[2], charm[3], charm[4])
     #extstr:EXTATK, EXTDEF, EXTMATK, EXTMDEF
