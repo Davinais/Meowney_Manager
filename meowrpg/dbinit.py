@@ -24,7 +24,7 @@ async def dbinit():
         EXTMATK INTEGER,
         EXTMDEF INTEGER);
     INSERT INTO Classes VALUES (1, '學長的形狀', 5, 4, -1, -2);
-    INSERT INTO Classes VALUES (2, '三十歲沒女友', -2, -1, 6, 2);
+    INSERT INTO Classes VALUES (2, '三十歲沒女友', -1, -1, 6, 2);
     INSERT INTO Classes VALUES (3, '巨乳狂熱教徒', 9, -1, 0, -2);
     INSERT INTO Classes VALUES (4, '肥宅', 2, 1, 2, 2);
     INSERT INTO Classes VALUES (5, '自宅警備員', -1, 6, 0, 1);
