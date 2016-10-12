@@ -1,44 +1,46 @@
 import discord
 import os
 from .calcext import calcext
-from .players import get_all_playerstats
+from .players import Players
 from .classes import get_classdata
 from .items import get_itemdata
 
-async def checkstats(player, client, channel):
+async def checkstats(caller, client, channel):
     dbinitial = False if os.path.exists("rpg.db") else True
     if dbinitial:
         await client.send_message(channel, "喵洽大冒險尚未開始喔，請輸入`$rpg`來成為第一位玩家吧！")
         return
-    playerstats = get_all_playerstats(player.id)
-    if playerstats is None:
+    player = Players(caller)
+    if player.user is None:
         await client.send_message(channel, "{0}還不是喵洽大冒險的玩家喔，快輸入`$rpg`來開始這段旅程吧！".format(player.mention))
         return
-    #playerstats: ID, HP, SAN, ATK ,DEF, MATK, MDEF, Classes, Weapons, Armors, Charms, Process
-    if playerstats[7] is None:
+    playerclass_id = player.get_class_id()
+    if playerclass_id is None:
         await client.send_message(channel, "{0}連職業都沒有選還敢來問狀態，哼！".format(player.mention))
         return
+    stats = player.get_stats()
     playerext = {"ATK":0, "DEF":0, "MATK":0, "MDEF":0}
     #檢查職業
-    playerclass = get_classdata(playerstats[7])
+    playerclass = get_classdata(playerclass_id)
     classname = playerclass[0]
     playerext = await calcext(playerext, playerclass[1], playerclass[2], playerclass[3], playerclass[4])
+    items = player.get_items()
     #檢查武器
     weapon_name = "<無>"
-    if not playerstats[8] is None:
-        weapon = get_itemdata("Weapons", playerstats[8])
+    if not items["Weapons"] is None:
+        weapon = get_itemdata("Weapons", items["Weapons"])
         weapon_name = weapon[0]
         playerext = await calcext(playerext, weapon[1], weapon[2], weapon[3], weapon[4])
     #檢查身體裝備
     armor_name = "<無>"
-    if not playerstats[9] is None:
-        armor = get_itemdata("Armors", playerstats[9])
+    if not items["Armors"] is None:
+        armor = get_itemdata("Armors", items["Armors"])
         armor_name = armor[0]
         playerext = await calcext(playerext, armor[1], armor[2], armor[3], armor[4])
     #檢查護符
     charm_name = "<無>"
-    if not playerstats[10] is None:
-        charm = get_itemdata("Charms", playerstats[10])
+    if not items["Charms"] is None:
+        charm = get_itemdata("Charms", items["Charms"])
         charm_name = charm[0]
         playerext = await calcext(playerext, charm[1], charm[2], charm[3], charm[4])
     #extstr:EXTATK, EXTDEF, EXTMATK, EXTMDEF
@@ -50,9 +52,9 @@ async def checkstats(player, client, channel):
     "術傷： {8}({9})　　　　術抗： {10}({11})\n\n"
     "增益武器： {12}\n"
     "身體裝備： {13}\n"
-    "飾品　　： {14}```".format(player.mention, classname, str(playerstats[1]), str(playerstats[2]),
-    str(playerstats[3]), extstr[0], str(playerstats[4]), extstr[1],
-    str(playerstats[5]), extstr[2], str(playerstats[6]), extstr[3], 
+    "飾品　　： {14}```".format(player.mention, classname, str(stats["HP"]), str(stats["SAN"]),
+    str(stats["ATK"]), extstr[0], str(stats["DEF"]), extstr[1],
+    str(stats["MATK"]), extstr[2], str(stats["MDEF"]), extstr[3], 
     weapon_name, armor_name, charm_name))
 
 async def get_extstr(playerext):
