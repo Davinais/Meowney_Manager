@@ -12,6 +12,7 @@ class Players:
     __items = {"Weapons":None, "Armors":None, "Charms":None}
     __process = 0
     __need_update = False
+    __update_script = ""
 
     def __init__(self, player):
         dbconn = sqlite3.connect(playersdb)
@@ -42,9 +43,7 @@ class Players:
         if self.__need_update:
             dbconn = sqlite3.connect(playersdb)
             dbcursor = dbconn.cursor()
-            dbcursor.execute("UPDATE Players SET HP = ?, SAN = ?, ATK = ?, DEF = ?, MATK = ?, MDEF = ?, Classes = ?, Weapons = ?, Armors = ?, Charms = ?, Process = ? WHERE ID = ?",
-            (self.__stats["HP"], self.__stats["SAN"], self.__stats["ATK"], self.__stats["DEF"], self.__stats["MATK"], self.__stats["MDEF"],
-            self.__class_id, self.__items["Weapons"], self.__items["Armors"], self.__items["Charms"], self.__process, self.id))
+            dbcursor.executescript(self.__update_script)
             dbcursor.close()
             dbconn.commit()
             dbconn.close()
@@ -64,20 +63,25 @@ class Players:
 
     def stats_change(self, stats_name, amount):
         self.__stats[stats_name] += amount
+        self.__update_script += "UPDATE Players SET " + stats_name + " = " + str(self.__stats[stats_name]) + " WHERE ID = " + self.id + ";\n"
         self.__need_update = True
 
     def stats_set(self, stats_name, set_number):
         self.__stats[stats_name] = set_number
+        self.__update_script += "UPDATE Players SET " + stats_name + " = " + str(self.__stats[stats_name]) + " WHERE ID = " + self.id + ";\n"
         self.__need_update = True
 
     def class_set(self, class_id):
         self.__class_id = class_id
+        self.__update_script += "UPDATE Players SET Classes = " + str(self.__class_id) + " WHERE ID = " + self.id + ";\n"
         self.__need_update = True
 
     def items_equip(self, item_category, item_id):
         self.__items[item_category] = item_id
+        self.__update_script += "UPDATE Players SET " + item_category + " = " + str(self.__items[item_category]) + " WHERE ID = " + self.id + ";\n"
         self.__need_update = True
 
     def process_set(self, process):
         self.__process = process
+        self.__update_script += "UPDATE Players SET Process = " + str(self.__process) + " WHERE ID = " + self.id + ";\n"
         self.__need_update = True
